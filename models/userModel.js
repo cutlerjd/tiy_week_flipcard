@@ -2,6 +2,12 @@ const conn = require('../lib/db.js')
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid')
 
+/**
+ * This function is used by Passport to log in users
+ * @param {string} username Used by the user for logging in
+ * @param {string} password Password of the user
+ * @param {callback} done First object returned in the callback is errors, second object is either the user object or null/false
+ */
 function authenticate(username, password, done) {
     let sql = `
     SELECT *
@@ -30,6 +36,14 @@ function authenticate(username, password, done) {
         }
     })
 }
+/**
+ * Returns a promise object. Promise will insert user into the users table, hash and store password, and create token.
+ * @param {string} username - Required for login
+ * @param {string} displayName 
+ * @param {string} email 
+ * @param {string} password unhashed, will be stored hashed - required for login
+ * createPassword and createToken are used within this function
+ */
 function createUser(username, displayName, email,password){
     return new Promise(function(resolve,reject){
         let sql = `
@@ -75,6 +89,11 @@ function createUser(username, displayName, email,password){
         })
     })
 }
+/**
+ * Returns a promise object. Will take an unhashed password and store it hashed
+ * @param {*int} id_user 
+ * @param {*string} password 
+ */
 function createPassword(id_user,password){
     return new Promise(function(resolve,reject){
         const hash = bcrypt.hash(password, 8);
@@ -107,6 +126,11 @@ function createPassword(id_user,password){
         })
     })
 }
+/**
+ * Returns a promise object. Creates a token for the id_user provided
+ * @param {*int} id_user 
+ * Used by createUser function
+ */
 function createToken(id_user){
     return new Promise(function(resolve,reject){
         let token = uuid()
@@ -131,13 +155,18 @@ function createToken(id_user){
         })
     })
 }
-function findById(id, done) {
+/**
+ * Passport helper function. Confirms the deserilized user in Passport exists
+ * @param {*int} id_user 
+ * @param {*callback} done 
+ */
+function findById(id_user, done) {
     let sql = `
     SELECT *
     FROM users
     WHERE id = ?
     `
-    conn.query(sql, [id], function (err, results, fields) {
+    conn.query(sql, [id_user], function (err, results, fields) {
         if (!err) {
             done(null, results[0])
         } else {
@@ -146,6 +175,10 @@ function findById(id, done) {
         }
     })
 }
+/**
+ * Used by authorize.js middleware
+ * @param {*string} token 
+ */
 function verifyToken(token){
     return new Promise(function(resolve,reject){
         let sql = `
