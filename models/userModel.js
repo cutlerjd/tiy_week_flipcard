@@ -55,7 +55,7 @@ function createUser(username, displayName, email,password){
                 reject({
                     status:'Failure',
                     error: true,
-                    errorMessage:'Failed creating user'
+                    errorMessage:['Failed creating user']
                 })
             }else{
                 let passwd = createPassword(results.insertId,password)
@@ -63,7 +63,7 @@ function createUser(username, displayName, email,password){
                     reject({
                     status:'Failure',
                     error:true,
-                    errorMessage:'create user failed creating password'
+                    errorMessage:['create user failed creating password']
                 })})
                 .then(function(data){
                     let token = createToken(results.insertId)
@@ -71,7 +71,7 @@ function createUser(username, displayName, email,password){
                         reject({
                         status:'Failure',
                         error:true,
-                        errorMessage:'create user failed storing token'
+                        errorMessage:['create user failed storing token']
                     })})
                     .then(function(tokenResults){
                         resolve({
@@ -101,7 +101,7 @@ function createPassword(id_user,password){
             reject({
                 status:'Failure',
                 error:true,
-                errorMessage: 'Failed creating password hash'
+                errorMessage: ['Failed creating password hash']
             })
         })
         .then(function(passwordHash){
@@ -114,7 +114,7 @@ function createPassword(id_user,password){
                     reject({
                         status:'Failure',
                         error: true,
-                        errorMessage: 'Failed storing password hash'
+                        errorMessage: ['Failed storing password hash']
                     })
                 } else {
                     resolve ({results: results,
@@ -142,7 +142,7 @@ function createToken(id_user){
                 reject({
                     status:'Failure',
                     error:true,
-                    errorMessage:'failed inserting token'
+                    errorMessage:['failed inserting token']
                 })
             }else{
                 resolve({
@@ -189,13 +189,13 @@ function verifyToken(token){
             if(err){
                 reject({
                     status:'Failure',
-                    message:'verifyToken failed db query'
+                    message:['verifyToken failed db query']
                 })
             }else {
                 if(!results[0]){
                     reject({
                         status:'Failure',
-                        message:'Valid token not present'
+                        message:['Valid token not present']
                     })
                 }else{
                     resolve(results[0])
