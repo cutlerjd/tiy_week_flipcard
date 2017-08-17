@@ -1,0 +1,29 @@
+{
+  "name": "week-flipcard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -e .js,.mustache,.css,.json app"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "config": "^1.26.2",
+    "dateformat": "^2.0.0",
+    "express": "^4.15.3",
+    "express-session": "^1.15.5",
+    "mustache-express": "^1.2.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "boilerplate": {
+    "name": "daily_schema_mongoose",
+    "version": "1.0.0",
+    "description": "",
+    "author": "",
+    "license": "ISC"
+  },
+  "description": ""
+}
