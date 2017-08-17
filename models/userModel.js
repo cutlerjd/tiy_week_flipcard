@@ -5,7 +5,8 @@ const uuid = require('uuid')
 function authenticate(username, password, done) {
     let sql = `
     SELECT *
-    FROM users
+    FROM users u
+    JOIN hash h ON u.id=h.id_user
     WHERE username = ?
     `
     conn.query(sql, [username.toLowerCase()], function (err, results, fields) {
@@ -35,7 +36,7 @@ function createUser(username, displayName, email,password){
         let sql = `
         INSERT INTO users (username,displayName,email)
         VALUES (?,?,?)`
-        conn.query(sql,[username,displayName,email],function(err,results,fields){
+        conn.query(sql,[username.toLowerCase(),displayName,email],function(err,results,fields){
             if(err){
                 console.log(err)
                 reject({
@@ -62,7 +63,7 @@ function createUser(username, displayName, email,password){
                     .then(function(tokenResults){
                         resolve({
                             status:'Success',
-                            username:username,
+                            username:username.toLowerCase(),
                             displayName:displayName,
                             email:email,
                             token:tokenResults.token,
@@ -90,7 +91,7 @@ function createPassword(id_user,password){
             INSERT INTO hash (id_user,passwordHash)
             VALUES (?,?)
             `
-            conn.query(sql,[id_user,password],function(err,results,fields){
+            conn.query(sql,[id_user,passwordHash],function(err,results,fields){
                 if(err){
                     reject({
                         status:'Failure',
@@ -148,9 +149,6 @@ function findById(id, done) {
     })
 }
 
-user = createUser('jase4','Jase2','jase@jase.com','bad')
-user.catch(console.log)
-user.then(console.log)
 module.exports = {
     authenticate: authenticate,
     createUser: createUser,
