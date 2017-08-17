@@ -9,7 +9,8 @@ const session = require('express-session')
 const bodyParser = require('body-parser')
 const indexRouter = require('./routes/indexRoute')
 const aboutRouter = require('./routes/aboutRoute')
-const User = require('./models/usersModel')
+const apiRouter = require('./routes/apiRoute')
+const User = require('./models/userModel')
 
 //Used for session managment
 app.use(session({
@@ -71,14 +72,13 @@ app.engine('mustache', mustacheExpress());
 app.set('views', './views')
 app.set('view engine', 'mustache')
 
-
-
 //Allows for a static directory for hosting CSS and other files
 app.use(express.static(path.join(__dirname, 'static')))
 
 //Use the routes files.
 app.use('/', indexRouter);
 app.use('/about', aboutRouter);
+app.use('/1/api/',Authorize,apiRouter)
 
 app.listen(3000, function(){
   console.log("App running on port 3000")

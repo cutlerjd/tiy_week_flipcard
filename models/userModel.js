@@ -15,7 +15,6 @@ function authenticate(username, password, done) {
                 let passwordHash = results[0].passwordHash
                 if (bcrypt.compareSync(password, passwordHash)) {
                     let user = results[0]
-                    console.log("Hashes match!")
                     done(null, user)
                 } else {
                     console.log("bad pw")
@@ -140,7 +139,6 @@ function findById(id, done) {
     `
     conn.query(sql, [id], function (err, results, fields) {
         if (!err) {
-            console.log("findByID no error")
             done(null, results[0])
         } else {
             console.log(err)
@@ -148,9 +146,34 @@ function findById(id, done) {
         }
     })
 }
-
+function verifyToken(token){
+    return new Promise(function(resolve,reject){
+        let sql = `
+        SELECT *
+        FROM tokens
+        WHERE token = ? AND active=1`
+        conn.query(sql,[token],function(err,results,fields){
+            if(err){
+                reject({
+                    status:'Failure',
+                    message:'verifyToken failed db query'
+                })
+            }else {
+                if(!results[0]){
+                    reject({
+                        status:'Failure',
+                        message:'Valid token not present'
+                    })
+                }else{
+                    resolve(results[0])
+                }
+            }
+        })
+    })
+}
 module.exports = {
     authenticate: authenticate,
     createUser: createUser,
-    findById: findById
+    findById: findById,
+    verifyToken:verifyToken
 }
