@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router()
+const router = express.Router({mergeParams: true})
 const Deck = require('../models/deckModel')
 
 router.get('/',function(req,res,next){
@@ -35,13 +35,24 @@ router.get('/:deckId',function(req,res,next){
         res.json(data)
     })
 })
-router.put('/:deckId',function(req,res,next){
+router.patch('/:deckId',function(req,res,next){
     //Send lists of decks
-    res.json({
-        message:"This update a deck",
-        name:"Name here",
-        deck_id:req.params.deckId,
-        cardCount:"a number"
+    let deck = Deck.patchDeck(res.locals.id_user,req.params.deckId,req.body.title,req.body.description)
+    deck.catch(function(err){
+        res.json(err)
+    })
+    .then(function(data){
+        res.json(data)
+    })
+})
+router.delete('/:deckId',function(req,res,next){
+    //Send lists of decks
+    let deck = Deck.deleteDeck(res.locals.id_user,req.params.deckId,req.body.title,req.body.description)
+    deck.catch(function(err){
+        res.json(err)
+    })
+    .then(function(data){
+        res.json(data)
     })
 })
 
