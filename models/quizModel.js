@@ -11,7 +11,10 @@ function createQuiz(id_user,id_deck_arr,questions){
         })
         .then(function(obj){
             let quizArr = shuffleArray(obj.cards)
-            console.log(quizArr)
+            quizArr.forEach(function(item,i){
+                item.question = (i+1)
+            })
+            resolve(quizArr)
         })
     })
 }
