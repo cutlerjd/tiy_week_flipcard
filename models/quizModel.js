@@ -18,6 +18,14 @@ function createQuiz(id_user,id_deck_arr,questions){
         })
     })
 }
+function newQuiz(id_user,name){
+    return new Promise(function(resolve,reject){
+        let sql = `
+        INSERT INTO quiz (id_user,name)
+        VALUES (?,?)`
+        conn.query(sql,[id_user,name],function())
+    })
+}
 
 
 function shuffleArray(array) {
