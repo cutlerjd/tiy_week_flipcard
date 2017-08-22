@@ -35,7 +35,57 @@ function getQuizzes(id_user){
         })
     })
 }
-
+function getQuiz(id_user,id_quiz){
+    return new Promise(function(resolve,reject){
+        let sql = `
+        SELECT q.id as id_quiz, q.name as name, q.completed as completed, qu.id as id_question, qu.number as number, qu.answered as answered, qu.correct as correct, c.id as id_card, c.front as front, c.back as back, c.id_deck as id_deck
+        FROM quiz q
+        JOIN questions qu on q.id=qu.id_quiz
+        JOIN cards c ON qu.id_card=c.id
+        WHERE q.id = ? AND q.active = 1 AND qu.active = 1 AND q.id_user = ?`
+        conn.query(sql,[id_quiz,id_user],function(err,results,fields){
+            if(err){
+                reject({
+                    status:'Failure',
+                    error:true,
+                    errorMessage:['Failed to get quiz from db']
+                })
+            } else{
+                let questions = results.map(function(question){
+                    if(question.answered){question.answered=true}else{question.answered=false}
+                    if(question.correct){question.correct=true}else{question.correct=false}
+                    return {
+                        question:{
+                            id:question.id_question,
+                            number:question.number,
+                            front:question.front,
+                            back:question.back,
+                            answered:question.answered,
+                            correct:question.correct
+                        }
+                    }
+                    
+                })
+                console.log({
+                    status:'Success',
+                    quiz:{
+                         id:results[0].id_quiz,
+                         name:results[0].name
+                    },
+                    questions:questions
+                })
+                resolve ({
+                    status:'Success',
+                    quiz:{
+                         id:results[0].id_quiz,
+                         name:results[0].name
+                    },
+                    questions:questions
+                })
+            }
+        })
+    })
+}
 function createQuiz(id_user,id_deck_arr,name,questions){
     return new Promise(function(resolve,reject){
         //Gets all the cards from the deck provided to get a count
@@ -153,5 +203,6 @@ function shuffleArray(array) {
 }
 module.exports = {
     createQuiz,
-    getQuizzes
+    getQuizzes,
+    getQuiz
 }
